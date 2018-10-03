@@ -1,0 +1,79 @@
+#include <SFML/Graphics.hpp>
+#include <iostream>
+using namespace sf;
+RenderWindow window(VideoMode(800,400,32),"the game");//okienko gry
+class Button
+{
+    bool canClick=false;
+    Texture tekstura;
+    //tekstura.loadFromFile("ecksdee.jpg");
+    Button(int x=150, int y=50)
+    {
+        RectangleShape r(Vector2f(x,y));
+
+    }
+};
+bool canClick=false;
+void Button(RectangleShape r,Vector2i mP)
+{
+    if((mP.x>=r.getPosition().x && mP.x<=r.getPosition().x+r.getSize().x)
+       && (mP.y>=r.getPosition().y && mP.y<=r.getPosition().y+r.getSize().y)) //czy znajduje sie w polu przycisku
+    {
+        if(Mouse::isButtonPressed(Mouse::Left) && canClick)//jezeli przycisk myszy nacisniety
+            std::cout<<"welp ";
+        else if(!(Mouse::isButtonPressed(Mouse::Left)))//jezeli nie jest
+            canClick=true;
+    }
+    else
+        canClick=false;
+}
+void menuGame()
+{
+    RectangleShape quitButton(Vector2f(150,50)),startButton(Vector2f(150,50));//przyciski
+    Vector2i mPos;//pozycja myszki
+    Texture tekstura;
+    tekstura.loadFromFile("ecksdee.jpg");
+    quitButton.setTexture(&tekstura);//ustawianie tekstury sprite'a
+    startButton.setTexture(&tekstura);
+    Sprite sprajt,sprite;
+    sprajt.setTexture(tekstura);
+    sprite.setTexture(tekstura);
+    quitButton.setPosition(50,300);
+    startButton.setPosition(50,50);
+    startButton.setFillColor(Color::Green);
+    quitButton.setFillColor(Color::Red);
+    window.setFramerateLimit(60);// 60 fps
+    while(window.isOpen())
+    {
+        mPos=Mouse::getPosition(window);//sprawdzanie wartosci x i y myszki
+        if(sprite.getPosition().y==0)
+            sprajt.setPosition(0.f,452.f);
+        sprajt.move(0.f,-0.5f);
+        if(sprajt.getPosition().y==0)
+            sprite.setPosition(0.f,452.f);
+        sprite.move(0.f,-0.5f);
+        Event Close;
+        if(window.pollEvent(Close))
+            if((Close.type==Event::KeyPressed && Close.key.code==Keyboard::Escape) || Close.type==Event::Closed)
+                window.close();
+        Button(startButton,mPos);
+        if((mPos.x>=quitButton.getPosition().x && mPos.x<=quitButton.getPosition().x+quitButton.getSize().x) && (mPos.y>=quitButton.getPosition().y && mPos.y<=quitButton.getPosition().y+quitButton.getSize().y))
+            if(Mouse::isButtonPressed(Mouse::Left))
+                window.close();
+        window.draw(sprajt);//wyswietlanie rzeczy
+        window.draw(sprite);
+        window.draw(quitButton);
+        window.draw(startButton);
+        window.display();//wyswietlanie zawartosci ekranu
+        window.clear(Color(Color::Red));
+    }
+}
+void startGame()
+{
+
+}
+int main()
+{
+    menuGame();
+    return 0;
+}

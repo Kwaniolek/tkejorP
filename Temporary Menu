@@ -2,75 +2,82 @@
 #include <iostream>
 using namespace sf;
 RenderWindow window(VideoMode(800,400,32),"the game");//okienko gry
-class Button
+class Button                         //uniwersalna klasa przycisku
 {
     bool canClick=false;
-    Texture tekstura;
-    //tekstura.loadFromFile("ecksdee.jpg");
-    Button(int x=150, int y=50)
+    Vector2i mP;                     //pozycja myszki
+public:
+    bool doFunc=false;               //czy moze wywolac funkcje
+    RectangleShape r;                //kształt
+    Button(int posX=0, int posY=0,int sizeX=150, int sizeY=50)//konstruktor-robi czynnosci przy samym tworzeniu
+    {                                                        //obiektu np.wywoluje funkcje, ustawia wartosci itd.
+        this->r.setSize(Vector2f(sizeX,sizeY));             //funkcja ta ma taka sama nazwe co klasa
+        this->r.setPosition(posX,posY);
+    }
+    void Click()                     //sprawdza czy kliknieto
     {
-        RectangleShape r(Vector2f(x,y));
-
+        mP=Mouse::getPosition(window);//pozycja myszki
+        if((mP.x>=this->r.getPosition().x && mP.x<=this->r.getPosition().x+this->r.getSize().x)
+                && (mP.y>=this->r.getPosition().y && mP.y<=this->r.getPosition().y+this->r.getSize().y))//czy myszka znajduje sie w polu przycisku
+        {
+            if(Mouse::isButtonPressed(Mouse::Left) && canClick)//jezeli przycisk myszy nacisniety
+                doFunc=true;                                  //mozna wywolac funkcje,
+            else if(!(Mouse::isButtonPressed(Mouse::Left)))  //jezeli nie jest
+                canClick=true;
+        }
+        else
+            canClick=false;
+    }
+    void setTexture(Texture &t)       //ustawia teksture kształtu
+    {
+        this->r.setTexture(&t);
     }
 };
-bool canClick=false;
-void Button(RectangleShape r,Vector2i mP)
+void startGame()                      //to jest funkcja, w ktorej bedziemy grali
 {
-    if((mP.x>=r.getPosition().x && mP.x<=r.getPosition().x+r.getSize().x)
-       && (mP.y>=r.getPosition().y && mP.y<=r.getPosition().y+r.getSize().y)) //czy znajduje sie w polu przycisku
-    {
-        if(Mouse::isButtonPressed(Mouse::Left) && canClick)//jezeli przycisk myszy nacisniety
-            std::cout<<"welp ";
-        else if(!(Mouse::isButtonPressed(Mouse::Left)))//jezeli nie jest
-            canClick=true;
-    }
-    else
-        canClick=false;
+
 }
-void menuGame()
+void menuGame()                       //to jest funkcja MENU
 {
-    RectangleShape quitButton(Vector2f(150,50)),startButton(Vector2f(150,50));//przyciski
-    Vector2i mPos;//pozycja myszki
-    Texture tekstura;
+    Button start(50,50),stop(50,300); //przyciski, obiekty klasy Button
+    Texture tekstura,t;
+    t.loadFromFile("no_ok.png");      //ustawianie, jaki obrazek ma byc tekstura
     tekstura.loadFromFile("ecksdee.jpg");
-    quitButton.setTexture(&tekstura);//ustawianie tekstury sprite'a
-    startButton.setTexture(&tekstura);
-    Sprite sprajt,sprite;
-    sprajt.setTexture(tekstura);
-    sprite.setTexture(tekstura);
-    quitButton.setPosition(50,300);
-    startButton.setPosition(50,50);
-    startButton.setFillColor(Color::Green);
-    quitButton.setFillColor(Color::Red);
-    window.setFramerateLimit(60);// 60 fps
+    Sprite pienki,sprite1,sprite2;
+    pienki.setTexture(t);
+    sprite1.setTexture(tekstura);
+    sprite2.setTexture(tekstura);
+    start.setTexture(tekstura);
+    stop.setTexture(tekstura);
+    window.setFramerateLimit(60);     // 60 fps
     while(window.isOpen())
     {
-        mPos=Mouse::getPosition(window);//sprawdzanie wartosci x i y myszki
-        if(sprite.getPosition().y==0)
-            sprajt.setPosition(0.f,452.f);
-        sprajt.move(0.f,-0.5f);
-        if(sprajt.getPosition().y==0)
-            sprite.setPosition(0.f,452.f);
-        sprite.move(0.f,-0.5f);
+        if(sprite2.getPosition().y==0)
+            sprite1.setPosition(0.f,452.f);
+        sprite1.move(0.f,-0.5f);
+        if(sprite1.getPosition().y==0)
+            sprite2.setPosition(0.f,452.f);
+        sprite2.move(0.f,-0.5f);
+        pienki.setPosition(0.f,-525.f);
         Event Close;
         if(window.pollEvent(Close))
             if((Close.type==Event::KeyPressed && Close.key.code==Keyboard::Escape) || Close.type==Event::Closed)
+                window.close();       //funkcja do zamykania okna
+        start.Click();
+            if(start.doFunc)
+                std::cout<<"welp ";
+            start.doFunc=false;
+        stop.Click();
+            if(stop.doFunc)
                 window.close();
-        Button(startButton,mPos);
-        if((mPos.x>=quitButton.getPosition().x && mPos.x<=quitButton.getPosition().x+quitButton.getSize().x) && (mPos.y>=quitButton.getPosition().y && mPos.y<=quitButton.getPosition().y+quitButton.getSize().y))
-            if(Mouse::isButtonPressed(Mouse::Left))
-                window.close();
-        window.draw(sprajt);//wyswietlanie rzeczy
-        window.draw(sprite);
-        window.draw(quitButton);
-        window.draw(startButton);
-        window.display();//wyswietlanie zawartosci ekranu
-        window.clear(Color(Color::Red));
+        window.draw(pienki);          //wyswietlanie rzeczy
+        window.draw(sprite1);
+        window.draw(sprite2);
+        window.draw(start.r);
+        window.draw(stop.r);
+        window.display();             //wyswietlanie ekranu
+        window.clear();               //czysci ekran
     }
-}
-void startGame()
-{
-
 }
 int main()
 {

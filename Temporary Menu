@@ -18,7 +18,7 @@ public:
     {
         mP=Mouse::getPosition(window);//pozycja myszki
         if((mP.x>=this->r.getPosition().x && mP.x<=this->r.getPosition().x+this->r.getSize().x)
-                && (mP.y>=this->r.getPosition().y && mP.y<=this->r.getPosition().y+this->r.getSize().y))//czy myszka znajduje sie w polu przycisku
+           && (mP.y>=this->r.getPosition().y && mP.y<=this->r.getPosition().y+this->r.getSize().y))//czy myszka znajduje sie w polu przycisku
         {
             if(Mouse::isButtonPressed(Mouse::Left) && canClick)//jezeli przycisk myszy nacisniety
                 doFunc=true;                                  //mozna wywolac funkcje,

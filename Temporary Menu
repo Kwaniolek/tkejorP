@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace sf;
-RenderWindow window(VideoMode(800,400,32),"the game");//okienko gry
+RenderWindow window(VideoMode(800,400,32),"the game");         //okienko gry
 class Button                         //uniwersalna klasa przycisku
 {
     bool canClick=false;
